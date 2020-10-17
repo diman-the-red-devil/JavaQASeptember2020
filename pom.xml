@@ -12,7 +12,6 @@
         <module>tests-junit</module>
         <module>model</module>
         <module>owner</module>
-        <module>tests-testng</module>
     </modules>
 
     <dependencies>
