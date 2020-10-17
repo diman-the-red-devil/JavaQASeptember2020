@@ -13,9 +13,25 @@ public class SampleTest {
     private Logger logger = LogManager.getLogger(SampleTest.class);
     private ServerConfig cfg = ConfigFactory.create(ServerConfig.class);
 
+    /*
+    Варианты команд для запуска
+
+    mvn clean test -Dbrowser='cHrOmE'
+    mvn clean test -Dbrowser=cHrOmE
+    mvn clean test -Dbrowser='chrome'
+    mvn clean test -Dbrowser=chrome
+
+    mvn clean test -Dbrowser='FiReFoX'
+    mvn clean test -Dbrowser=FiReFoX
+    mvn clean test -Dbrowser='firefox'
+    mvn clean test -Dbrowser=firefox
+     */
+
+    // Читаем передаваемый параметр browser (-Dbrowser)
+    String env = System.getProperty("browser", "chrome");
+
     @Before
     public void setUp() {
-        String env = System.getProperty("browser", "chrome");
         logger.info("env = " + env);
         driver = WebDriverFactory.create(env);
         logger.info("Драйвер стартовал!");
