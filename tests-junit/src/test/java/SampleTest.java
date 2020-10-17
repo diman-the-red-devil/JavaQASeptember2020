@@ -1,5 +1,4 @@
 import config.ServerConfig;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.aeonbits.owner.ConfigFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -7,7 +6,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 
 
 public class SampleTest {
@@ -17,13 +15,14 @@ public class SampleTest {
 
     @Before
     public void setUp() {
-        WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
+        String env = System.getProperty("browser", "chrome");
+        logger.info("env = " + env);
+        driver = WebDriverFactory.create(env);
         logger.info("Драйвер стартовал!");
     }
 
     @Test
-    public void openPage() {
+    public void openPage() throws InterruptedException {
         driver.get(cfg.url());
         logger.info("Открыта страница Отус - " + cfg.url());
     }
