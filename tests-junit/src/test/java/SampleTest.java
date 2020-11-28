@@ -1,3 +1,5 @@
+
+import Page_Objects.*;
 import config.ServerConfig;
 import org.aeonbits.owner.ConfigFactory;
 import org.apache.logging.log4j.LogManager;
@@ -6,15 +8,10 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Wait;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class SampleTest {
@@ -22,8 +19,32 @@ public class SampleTest {
     private Logger logger = LogManager.getLogger(SampleTest.class);
     private ServerConfig cfg = ConfigFactory.create(ServerConfig.class);
 
+    /*
+    Варианты команд для запуска
+    // mvn clean test -Dlogin=login -Dpass=pass
+    // mvn clean test -Dlogin=diman_the_red_devil@mail.ru -Dpass=JAKARTA12345-
+    */
+
     // Читаем передаваемый параметр browser (-Dbrowser)
     String env = System.getProperty("browser", "chrome");
+    // Читаем передаваемый параметр login (-Dlogin)
+    // Логин - "diman_the_red_devil@mail.ru"
+    String email = System.getProperty("login", "diman_the_red_devil@mail.ru");
+    // Читаем передаваемый параметр browser (-Dpass)
+    // Пароль - "JAKARTA12345-"
+    String password = System.getProperty("pass", "JAKARTA12345-");
+
+    // Тестовые данные
+    // Блок "ФИ и дата рождения" - Поля: "Имя", "Фамилия", "Имя (латиницей)", "Фамилия (латиницей)", "Имя (в блоге)", "Дата Рождения"
+    private static String fNameRu, lNameRu, fNameEn, lNameEn, blogName, dateOfBirth;
+    // Блок "Основная информация" - Поля: "Страна", "Город", "Готовнссть к переезду"
+    private static String country, city; boolean isReady;
+    // Блок "Формат работы" - Поля: "Полный день", "Гибкий график", "Удаленно"
+    private static boolean isFull, isFlexible, isRemote;
+    // Блок "Контактная информация"
+    private static String skypeContact, viberContact;
+    // Мапа для передачи параметров
+    private static Map<String, String> map;
 
     @Before
     public void setUp() {
@@ -32,107 +53,158 @@ public class SampleTest {
         logger.info("Драйвер стартовал!");
     }
 
-    // Добавление в сравнение двух смартфонов в Яндекс.Маркете
     @Test
-    public void openPage() {
-        WebDriverWait wait = new WebDriverWait(driver, 10, 1000);
+    public void openOtusSite() {
+        // 0. Инициализация тестовых данных
+        initializeTestData();
+        // 1. Открыть https://otus.ru
+        openStartPage();
+        // 2. Авторизоваться на сайте
+        authorize();
+        // 3. Войти в личный кабинет
+        gotoPersonalDataPage();
+        // 4. В разделе "О себе" заполнить все поля "Личные данные" и добавить не менее двух контактов
+        PersonalDataPage personalDataPage = new PersonalDataPage(driver);
+        personalDataPage.waitForPersonalDataPageLoad();
+        personalDataPage.fillNameDateBlock(map);
+        personalDataPage.fillLocationBlock(country, city,  isReady);
+        personalDataPage.fillWorkFormatBlock(isFull, isFlexible, isRemote);
+        personalDataPage.fillContactsBlock(skypeContact, viberContact);
+        // 5. Нажать сохранить
+        personalDataPage.saveAndContinue();
+        driver.close();
+        // 6. Открыть https://otus.ru в "чистом браузере"
+        driver = WebDriverFactory.create(env);
+        openStartPage();
+        // 7. Авторизоваться на сайте
+        authorize();
+        // 8. Войти в личный кабинет
+        gotoPersonalDataPage();
+        // 9. Проверить, что в разделе "О себе" отображаются указанные ранее данные
+        checkPersonalDataPage();
+        // Thread.sleep(2500);
+    }
 
-        // 1 - Открыть в Chrome сайт Яндекс.Маркет - "Электроника"-> "Смартфоны"
-        // Переходим на главную страницу Яндекс.Маркета
-        driver.get(cfg.url());
-        logger.info("Открыта страница Яндекс.Маркет - " + cfg.url());
-        // Переходим в раздел "Электроника"
-        driver.findElement(
-                By.xpath(".//span[text() = 'Электроника']")).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(
-                By.xpath(".//a[text() = 'Смартфоны']")));
-        // Переходим в раздел "Смартфоны"
-        driver.findElement(
-                By.xpath(".//a[text() = 'Смартфоны']")).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(
-                By.xpath(".//li//span[text() = 'Samsung']")));
+    // Инициализация тестовых данных
+    private void initializeTestData() {
+        fNameRu = "Дмитрий";
+        lNameRu = "Ким";
+        fNameEn = "Dmitriy";
+        lNameEn = "Kim";
+        blogName = "Дмитрий";
+        dateOfBirth = "17.10.1990";
+        map = new HashMap<>();
+        map.put("fNameRu", fNameRu);
+        map.put("lNameRu", lNameRu);
+        map.put("fNameEn", fNameEn);
+        map.put("lNameEn", lNameEn);
+        map.put("blogName", blogName);
+        map.put("dateOfBirth", dateOfBirth);
+        country = "Россия";
+        city = "Москва";
+        isReady = true;
+        isFull = false;
+        isFlexible = true;
+        isRemote = true;
+        skypeContact = "skype";
+        viberContact = "viber";
+    }
 
-        // 2 - Отфильтровать список товаров: Samsung и Xiaomi
-        // Выбираем фильтр "Samsung"
-        driver.findElement(
-                By.xpath(".//li//span[text() = 'Samsung']")).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(
-                By.xpath(".//li//span[text() = 'Xiaomi']")));
-        // Выбираем фильтр "Xiaomi"
-        driver.findElement(
-                By.xpath(".//li//span[text() = 'Xiaomi']")).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(
-                By.xpath(".//button[@data-autotest-id = 'dprice']")));
+    // Открытие страницы Otus
+    private void openStartPage() {
+        driver.manage().window().maximize();
+        String  url = cfg.otus_url();
+        driver.get(url);
 
-        // 3 - Отсортировать список товаров по цене (от меньшей к большей)
-        // Выбираем сортировку товаров по цене (от меньшей к большей)
-        driver.findElement(
-                By.xpath(".//button[@data-autotest-id = 'dprice']")).click();
-        // Думал завязаться на что-то более универсальное, но не получилось :(
-        // Фронт просто перерисовывает блок со список товаров
-        wait.until(ExpectedConditions.presenceOfElementLocated(
-                By.xpath(".//span[contains(text(), 'Смартфон Xiaomi Redmi Go 1/8GB')]")));
+        StartPage startPage = new StartPage(driver, url);
+        startPage.waitForStartPageLoad();
+        startPage.goToLoginAndRegPage();
+    }
 
-        // 4 - Добавить первый в списке Samsung
-        // Отбираем в список все смартфоны Samsung
-        logger.info("Список смартфонов Samsung: ");
-        List<WebElement> samsungList = driver.findElements(
-                By.xpath(".//span[contains(text(), 'Samsung')]"));
-        for(WebElement samsungItem : samsungList) {
-            logger.info(samsungItem.getText());
-        }
-        // Добавляем в сравнение первый в списке Samsung
-        String samsungFirstItemName = samsungList.get(1).getText();
-        String samsungXpath = ".//span[text() = '" + samsungFirstItemName + "']/ancestor::article//div[2]/div";
-        driver.findElement(
-                By.xpath(samsungXpath)).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(
-                By.xpath(".//div[@data-apiary-widget-id = '/content/popupInformer']/div")));
+    // Авторизация
+    private void authorize() {
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.waitForLoginPageLoad();
 
-        // 5 -- Проверить, что отобразилась плашка "Товар {имя товара} добавлен к сравнению"
-        // Проверяем, что отобразилась плашка с именем товара
-        WebElement samsungItemAddedToCompare = driver.findElement(
-                By.xpath(".//div[@data-apiary-widget-id = '/content/popupInformer']/div"));
-        String samsungItemAddedToCompareText = samsungItemAddedToCompare.getText();
-        logger.info(samsungItemAddedToCompareText);
-        Assert.assertTrue(samsungItemAddedToCompareText.contains(samsungFirstItemName));
+        loginPage.enterEmail(email);
+        loginPage.enterPassWord(password);
+        loginPage.submitLoginPassword();
+    }
 
-        // 6 - Добавить первый в списке Xiaomi
-        // Отбираем в список все смартфоны Xiaomi
-        logger.info("Список смартфонов Xiaomi: ");
-        List<WebElement> xiaomiList = driver.findElements(
-                By.xpath(".//span[contains(text(), 'Xiaomi')]"));
-        for(WebElement xiaomiItem : xiaomiList) {
-            logger.info(xiaomiItem.getText());
-        }
-        // Добавляем в сравнение первый в списке Xiaomi
-        String xiaomiFirstItemName = xiaomiList.get(1).getText();
-        String xiaomiXpath = ".//span[text() = '" + xiaomiFirstItemName + "']/ancestor::article//div[2]/div";
-        driver.findElement(
-                By.xpath(xiaomiXpath)).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(
-                By.xpath(".//div[@data-apiary-widget-id = '/content/popupInformer']/div")));
+    // Вход в личный кабинет
+    private void gotoPersonalDataPage() {
+        UserMainPage userMainPage = new UserMainPage(driver);
+        userMainPage.waitForUserMainPageLoad();
+        userMainPage.goToLearningPage();
 
-        // 7 -- Проверить, что отобразилась плашка "Товар {имя товара} добавлен к сравнению"
-        // Проверяем, что отобразилась плашка с именем товара
-        WebElement xiaomiItemAddedToCompare = driver.findElement(
-                By.xpath(".//div[@data-apiary-widget-id = '/content/popupInformer']/div"));
-        String xiaomiItemAddedToCompareText = xiaomiItemAddedToCompare.getText();
-        logger.info(xiaomiItemAddedToCompareText);
-        Assert.assertTrue(xiaomiItemAddedToCompareText.contains(xiaomiFirstItemName));
+        LearningPage learningPage = new LearningPage(driver);
+        learningPage.waitForLearningPageLoad();
+        learningPage.goToPersonalDataPage();
+    }
 
-        // 8 - Перейти в раздел Сравнение
-        // Переходим в раздаел "Сравнение"
-        driver.findElement(
-                By.xpath(".//span[text() = 'Сравнить']")).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(
-                By.xpath(".//div[text() = 'Сравнение товаров']")));
+    // Проверка ранннее введенных данных в разделе "О себе"
+    public void checkPersonalDataPage() {
+        String expS, actS, msg;
+        boolean expB, actB;
 
-        // 9 -- Проверить, что в списке товаров 2 позиции
-        // Проверяем, что в списке товаров 2 позиции (1 Samsung + 1 Xiaomi)
-        List<WebElement> itemsAddedToCompareCount = driver.findElements(
-                By.xpath(".//div[@data-apiary-widget-id = '/content/compareContent']//img"));
-        Assert.assertEquals(itemsAddedToCompareCount.size(), 2);
+        PersonalDataPage personalDataPage = new PersonalDataPage(driver);
+        personalDataPage.waitForPersonalDataPageLoad();
+        // Проверка поля "Имя"
+        expS = fNameRu; actS = personalDataPage.getNameDateBlock().getFNameRuValue();
+        msg = "Fail! - " + expS + " != " + actS;
+        Assert.assertEquals(msg, expS, actS);
+        // Проверка поля "Фамилия"
+        expS = lNameRu; actS = personalDataPage.getNameDateBlock().getLNameRuValue();
+        msg = "Fail! - " + expS + " != " + actS;
+        Assert.assertEquals(msg, expS, actS);
+        // Проверка поля "Имя (латиницей)"
+        expS = fNameEn; actS = personalDataPage.getNameDateBlock().getFNameEnValue();
+        msg = "Fail! - " + expS + " != " + actS;
+        Assert.assertEquals(msg, expS, actS);
+        // Проверка поля "Фамилия (латиницей)"
+        expS = lNameEn; actS = personalDataPage.getNameDateBlock().getLNameEnValue();
+        msg = "Fail! - " + expS + " != " + actS;
+        Assert.assertEquals(msg, expS, actS);
+        // Проверка поля "Имя (в блоге)"
+        expS = blogName; actS = personalDataPage.getNameDateBlock().getBlogNameValue();
+        msg = "Fail! - " + expS + " != " + actS;
+        Assert.assertEquals(msg, expS, actS);
+        // Проверка поля "Дата рождения"
+        expS = dateOfBirth; actS = personalDataPage.getNameDateBlock().getDateOfBirthValue();
+        msg = "Fail! - " + expS + " != " + actS;
+        Assert.assertEquals(msg, expS, actS);
+        // Проверка поля "Страна"
+        expS = country; actS = personalDataPage.getLocationBlock().getCountry();
+        msg = "Fail! - " + expS + " != " + actS;
+        Assert.assertEquals(msg, expS, actS);
+        // Проверка поля "Город"
+        expS = city; actS = personalDataPage.getLocationBlock().getCity();
+        msg = "Fail! - " + expS + " != " + actS;
+        Assert.assertEquals(msg, expS, actS);
+        // Проверка поля "Готовность к переезду"
+        expB = isReady; actB = personalDataPage.getLocationBlock().getReadyToRelocate1();
+        msg = "Fail! - " + expB + " != " + actB;
+        Assert.assertEquals(msg, expB, actB);
+        // Проверка поля "Полный день"
+        expB = isFull; actB = personalDataPage.getWorkFormatBlock().getFull();
+        msg = "Fail! - " + expB + " != " + actB;
+        Assert.assertEquals(msg, expB, actB);
+        // Проверка поля "Гибкий график"
+        expB = isFlexible; actB = personalDataPage.getWorkFormatBlock().getFlexible();
+        msg = "Fail! - " + expB + " != " + actB;
+        Assert.assertEquals(msg, expB, actB);
+        // Проверка поля "Удаленно"
+        expB = isRemote; actB = personalDataPage.getWorkFormatBlock().getRemote();
+        msg = "Fail! - " + expB + " != " + actB;
+        Assert.assertEquals(msg, expB, actB);
+        // Проверка поля "Контакт"
+        expB = true; actB = personalDataPage.getContactsBlock().isContactExists("Skype", skypeContact);
+        msg = "Fail! - " + expB + " != " + actB;
+        Assert.assertEquals(msg, expB, actB);
+        // Проверка поля "Контакт"
+        expB = true; actB = personalDataPage.getContactsBlock().isContactExists("Viber", viberContact);
+        msg = "Fail! - " + expB + " != " + actB;
+        Assert.assertEquals(msg, expB, actB);
     }
 
     @After
