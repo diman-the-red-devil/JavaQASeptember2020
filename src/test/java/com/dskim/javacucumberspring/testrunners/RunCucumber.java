@@ -1,0 +1,23 @@
+package com.dskim.javacucumberspring.testrunners;
+
+import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
+import org.junit.runner.RunWith;
+
+// @RunWith
+// Указание класса для запуска тестов
+@RunWith(Cucumber.class)
+// @CucumberOptions
+// Указание опции для запуска BDD тестов Cucumber/Gherkin
+@CucumberOptions(
+        // Список папок с feature файлами - фичи/сценарии
+        features = {"src/test/resources/features"},
+        // Спсиок пакетов с steps файлами - шаги
+        glue = {"com.dskim.javacucumberspring.steps"},
+        // Список тегов - фильтр запускаемых тестов
+        // tags = {},
+        //
+        plugin = {"pretty"}
+        )
+public class RunCucumber {
+}
