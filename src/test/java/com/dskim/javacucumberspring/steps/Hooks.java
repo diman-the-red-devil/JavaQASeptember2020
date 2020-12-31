@@ -7,14 +7,11 @@ import com.dskim.javacucumberspring.pages.model.WaitFor;
 import com.dskim.javacucumberspring.pages.model.WebDriverHolder;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -34,7 +31,7 @@ public class Hooks {
         WebDriverHolder.setDriver(WebDriverFactory.create(env));
         WebDriverHolder.getDriver().manage().window().maximize();
         logger.info("Драйвер стартовал!");
-        WaitFor.initWait(WebDriverHolder.getDriver(), 10, 100);
+        WaitFor.initWait(WebDriverHolder.getDriver(), 5, 1000);
         PageHolder.initPages(WebDriverHolder.getDriver());
     }
 
