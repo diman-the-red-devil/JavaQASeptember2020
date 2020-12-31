@@ -1,3 +1,5 @@
+package com.dskim.javacucumberspring.browsers;
+
 public enum Browser {
     CHROME("chrome"),
     FIREFOX("firefox"),
