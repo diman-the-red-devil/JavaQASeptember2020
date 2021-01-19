@@ -1,7 +1,9 @@
 # language: ru
+#@allure.label.layer:ui
+#@allure.label.owner:kimds
 Функция: Главная -> Курсы
 
-  @main @regress
+  @main @regress @smoke @courses
   Структура сценария: Просмотр курсов "Программирование"
     Когда Открыть страницу StartPage в браузере
     И Отображается текст Авторские онлайн‑курсы на странице StartPage

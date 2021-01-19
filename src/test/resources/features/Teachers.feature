@@ -1,7 +1,10 @@
 # language: ru
+#@allure.label.layer:ui
+#@allure.label.owner:kimds
 Функция: Главная -> Преподавателям -> Наши преподаватели
 
-  @main @regress
+  @main @regress @teachers
+  #@allure.label.jira:UI-1
   Сценарий: Просмотр раздела "Наши преподаватели"
     Когда Открыть страницу StartPage в браузере
     И Отображается текст Авторские онлайн‑курсы на странице StartPage

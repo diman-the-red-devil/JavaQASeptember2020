@@ -7,22 +7,19 @@ import com.dskim.javacucumberspring.pages.model.WebDriverHolder;
 import io.cucumber.java.ru.Дано;
 import io.cucumber.java.ru.И;
 import io.cucumber.java.ru.То;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
 import java.util.List;
 
 public class CommonStepDefs {
-    private Logger logger = LogManager.getLogger(CommonStepDefs.class);
+    // private Logger logger = LogManager.getLogger(CommonStepDefs.class);
 
     @Дано("^Открыть страницу (.*) в браузере$")
     public void openPageInBrowser(String pageName) {
         String url = PageHolder.getPage(pageName).getUrl();
         WebDriverHolder.getDriver().get(url);
-        logger.info("Открыта страница - " + url);
+        // logger.info("Открыта страница - " + url);
     }
 
     @И("^Отображается текст (.*) на странице (.*)$")
@@ -221,10 +218,10 @@ public class CommonStepDefs {
     @И("Открыть браузер")
     public void openBrowser() {
         String env = System.getProperty("browser", "chrome");
-        logger.info("env = " + env);
+        // logger.info("env = " + env);
         WebDriverHolder.setDriver(WebDriverFactory.create(env));
         WebDriverHolder.getDriver().manage().window().maximize();
-        logger.info("Драйвер стартовал!");
+        // logger.info("Драйвер стартовал!");
         WaitFor.initWait(WebDriverHolder.getDriver(), 10, 100);
         PageHolder.initPages(WebDriverHolder.getDriver());
     }

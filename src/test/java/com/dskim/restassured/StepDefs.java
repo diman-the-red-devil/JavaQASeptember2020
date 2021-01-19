@@ -3,7 +3,7 @@ package com.dskim.restassured;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import org.json.JSONObject;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 

@@ -1,7 +1,9 @@
 # language: ru
+#@allure.label.layer:ui
+#@allure.label.owner:kimds
 Функция: Главная -> Авторизация -> Личный кабинет -> Персональные данные
 
-  @main @regress
+  @main @regress @smoke @biography
   Структура сценария: Заполнение раздела "О себе" блок "Личные данные"
     Когда Открыть страницу StartPage в браузере
     И Отображается текст Авторские онлайн‑курсы на странице StartPage
