@@ -1,20 +1,17 @@
 package com.dskim.javacucumberspring.pages.impl;
 
 import com.dskim.javacucumberspring.pages.model.Page;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-
 import java.util.HashMap;
 import java.util.List;
 
 // Страница "Главная" после авторизации
 public class UserMainPage implements Page {
     // Логирование
-    private Logger logger = LogManager.getLogger(UserMainPage.class);
+    // private Logger logger = LogManager.getLogger(UserMainPage.class);
 
     // URL
     private String url = "https://otus.ru/";

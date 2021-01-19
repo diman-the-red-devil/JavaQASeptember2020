@@ -1,20 +1,17 @@
 package com.dskim.javacucumberspring.pages.impl;
 
 import com.dskim.javacucumberspring.pages.model.Page;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-
 import java.util.HashMap;
 import java.util.List;
 
 // Страница "Личный кабинет"
 public class LearningPage implements Page {
     // Логирование
-    private Logger logger = LogManager.getLogger(LearningPage.class);
+    // private Logger logger = LogManager.getLogger(LearningPage.class);
 
     // URL
     private String url = "https://otus.ru/learning/";
