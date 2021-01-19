@@ -1,19 +1,21 @@
 package com.dskim.javacucumberspring.steps;
 
 import com.dskim.javacucumberspring.pages.model.PageHolder;
-import com.dskim.javacucumberspring.pages.model.WaitFor;
+import com.dskim.javacucumberspring.pages.model.WebDriverHolder;
 import io.cucumber.java.ru.То;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import io.qameta.allure.Allure;
 import org.junit.Assert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebElement;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CoursesStepDefs {
-    private Logger logger = LogManager.getLogger(CoursesStepDefs.class);
+    // private Logger logger = LogManager.getLogger(CoursesStepDefs.class);
 
     @То("^Проверить: В карточке курса по (.*) отображается текст (.*)$")
     public void assertThatCardValueIs(String course, String value) {
@@ -43,6 +45,10 @@ public class CoursesStepDefs {
             String actualValue = values.get(i);
             if(actualValue.contains(expectedValue)) {
                 String errorMessage = "Fail! expectedValue: " + expectedValue + " != " + " actualValue: " + actualValue;
+                Allure.addAttachment("Course Card", new ByteArrayInputStream(
+                        ((TakesScreenshot) WebDriverHolder.getDriver())
+                        .getScreenshotAs(OutputType.BYTES))
+                );
                 Assert.assertEquals(errorMessage, expectedValue, expectedValue);
             }
         }
