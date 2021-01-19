@@ -16,8 +16,12 @@ import org.junit.runner.RunWith;
         glue = {"com.dskim.javacucumberspring.steps"},
         // Список тегов - фильтр запускаемых тестов
         // tags = {},
-        //
-        plugin = {"pretty"}
+        // Плагин для Формирования отчета Allure
+        plugin = {
+                "io.qameta.allure.cucumber5jvm.AllureCucumber5Jvm",
+                "progress",
+                "summary"
+        }
         )
 public class RunCucumber {
 }
