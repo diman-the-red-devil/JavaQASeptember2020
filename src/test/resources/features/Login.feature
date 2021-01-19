@@ -1,7 +1,9 @@
 # language: ru
+#@allure.label.layer:ui
+#@allure.label.owner:kimds
 Функция: Авторизация в Otus
 
-  @main @regress
+  @main @regress @critical @Login
   Структура сценария: Авторизация в Otus
     Когда Открыть страницу StartPage в браузере
     И Отображается текст Авторские онлайн‑курсы на странице StartPage

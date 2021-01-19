@@ -2,17 +2,14 @@ package com.dskim.javacucumberspring.steps;
 
 import com.dskim.javacucumberspring.pages.model.PageHolder;
 import io.cucumber.java.ru.И;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.WebElement;
-
 import java.util.List;
 
 public class BiographyPersonalStepDefs {
-    private Logger logger = LogManager.getLogger(BiographyPersonalStepDefs.class);
+    // private Logger logger = LogManager.getLogger(BiographyPersonalStepDefs.class);
 
     @И("Проверить: Контакт (.*) на странице (.*) отображается со значением (.*)$")
     public void assertThatFielsContactValueIs(String contactType, String pageName, String value) {
@@ -23,7 +20,7 @@ public class BiographyPersonalStepDefs {
             try {
                 contact = webElement.findElement(By.xpath(contactTypeXpath));
             } catch (NotFoundException e) {
-                logger.info("Контакт типа " + contactType + " с значением " + value + " не найден");
+                // logger.info("Контакт типа " + contactType + " с значением " + value + " не найден");
                 continue;
             }
         }
